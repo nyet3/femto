@@ -1,4 +1,5 @@
 import m from 'mithril'
+const csURL = "https://api-sandbox.cloudsign.jp"
 
 class MembersCtrl {
 
@@ -7,11 +8,13 @@ class MembersCtrl {
     this.buffer = [];
 
     this.position = 0;
-    this.size = 15;
-    this.max = 500;
+    this.size = 100;
+    this.max = 0;
     this.step = 5;
 
+    this.access_token = "47d3f163-69fa-44a2-8c39-c8aa6ac12084";
     this.update();
+
   }
 
   update() {
@@ -27,19 +30,26 @@ class MembersCtrl {
     this.request(rangeFrom, rangeTo);
   }
 
+  // curl --header "Authorization: Bearer 5959268e-4393-44b8-81bc-ec4f9f480619" 
+  // https://api-sandbox.cloudsign.jp/documents
   async request(rangeFrom, rangeTo) {
 
-    // GET /members
-    for (let i = rangeFrom; i < rangeTo; i++) {
-      if (this.buffer.length < i || this.buffer[i] != null)
-        console.log(`NG: ${(i + this.position)}(${this.buffer[i].name})`);
+    const response = await fetch(`${csURL}/documents`, {
+      mode: "cors",
+      headers: {
+        "Authorization": `Bearer ${this.access_token}`,
+        "accept": "application/json"
+      }
+    })
 
-      this.buffer[i] = {
-        id: i,
-        name: `nyet${i}`,
-        mail: `nyet${i}@outlook.jp`,
-      };
-    }
+    const data = await response.json();
+    this.max = data.total;
+
+    const next = this.buffer.slice(this.position + this.size);
+
+    this.buffer.splice(this.position);
+    Array.prototype.push.apply(this.buffer, data.documents);
+    Array.prototype.push.apply(this.buffer, next);
 
     this.data = this.buffer.slice(this.position, this.position + this.size);
     m.redraw();
@@ -50,8 +60,8 @@ class MembersCtrl {
     this.update();
   }
 
-  onaddmember(event) {
-    // POST /members
+  onadditem(event) {
+    // POST /items
     this.buffer.push({
       name: `nyet${this.max}`,
       mail: `nyet${this.max}@new.outlook.jp`,
