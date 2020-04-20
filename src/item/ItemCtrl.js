@@ -7,7 +7,8 @@ class ItemCtrl {
     constructor(id) {
         this.id = id;
         this.data = new ItemModel(id);
-        this.access_token = "47d3f163-69fa-44a2-8c39-c8aa6ac12084";
+        this.origin = new ItemModel(id);
+        this.access_token = "c499b74c-9fb9-4149-ac5a-0bd52b7251e4";
 
         if (id != null) {
             this.GetDocuments();
@@ -29,6 +30,7 @@ class ItemCtrl {
             })
             const data = await response.json();
             this.data.doc = data;
+            this.origin.doc = data;
 
             m.redraw();
         }
@@ -49,6 +51,7 @@ class ItemCtrl {
             })
             const data = await response.json();
             this.data.attr = data;
+            this.origin.attr = data;
 
             m.redraw();
         }
@@ -63,7 +66,7 @@ class ItemCtrl {
             return;
         }
         this.PutDocument();
-        this.PutAttribute();
+        //this.PutAttribute();
     }
 
     // curl -X POST "https://api.cloudsign.jp/documents" 
@@ -79,10 +82,12 @@ class ItemCtrl {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": `Bearer ${this.access_token}`
             },
-            body: `title=${this.data.title}&note=${this.data.note}&message=${this.data.message}&can_transfer=${this.data.can_transfer}`
+            body: `title=${this.data.doc.title}&note=${this.data.doc.note}&message=${this.data.doc.message}&can_transfer=${this.data.doc.can_transfer ? 'true' : 'false'}`
         });
-        const postsData = await response.json();
-        console.log(postsData);
+        const data = await response.json();
+        console.log(data);
+
+        this.origin.doc = this.data.doc;
     }
 
     // curl -X PUT "https://api.cloudsign.jp/documents/ttt"
@@ -99,10 +104,12 @@ class ItemCtrl {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": `Bearer ${this.access_token}`
             },
-            body: `title=${this.data.title}&note=${this.data.note}&message=${this.data.message}&can_transfer=${this.data.can_transfer}`
+            body: `title=${this.data.doc.title}&note=${this.data.doc.note}&message=${this.data.doc.message}&can_transfer=${this.data.doc.can_transfer ? "true" : "false"}`
         });
         const postsData = await response.json();
         console.log(postsData);
+
+        this.origin.doc = this.data.doc;
     }
 
     // curl -X PUT "https://api.cloudsign.jp/documents/xxxxx/attribute"
@@ -120,18 +127,56 @@ class ItemCtrl {
     //    'amount':0,
     //    'options':[{'order':1,'content':'string'}]}"
     async PutAttribute() {
+        const data = {};
+        [
+            'title',
+            'counterparty',
+            'contract_at',
+            'validity_start_at',
+            'validity_end_at',
+            'validity_end_notice_at',
+            'auto_update',
+            'local_id',
+            'amount',
+        ].forEach(
+            item => {
+                if (item in this.data.attr && this.data.attr[item] != null && !Array.isArray(this.data.attr[item])) {
+                    data[item] = this.data.attr[item]
+                }
+            }
+        )
+
+        console.log(data);
+
+        [
+            'options'
+        ].forEach(
+            item => {
+                if (Array.isArray(this.data.attr[item]) && this.data.attr[item].length != 0) {
+                    data[item] = this.data.attr[item]
+                }
+            }
+        )
+
+        console.log(data);
+
+        const jsonStr = JSON.stringify(data);
+        console.log(jsonStr);
+
         const response = await fetch(`${csURL}/documents/${this.id}/attribute`, {
             mode: "cors",
             method: "PUT",
             headers: {
                 "accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.access_token}`,
-                "body": `${this.data.attr}`
+                "body": jsonStr,
+                "Authorization": `Bearer ${this.access_token}`
             },
         });
         const postsData = await response.json();
         console.log(postsData);
+
+        this.origin.attr = this.data.attr;
     }
 }
 

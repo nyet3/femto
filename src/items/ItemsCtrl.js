@@ -12,7 +12,7 @@ class MembersCtrl {
     this.max = 0;
     this.step = 5;
 
-    this.access_token = "47d3f163-69fa-44a2-8c39-c8aa6ac12084";
+    this.access_token = "c499b74c-9fb9-4149-ac5a-0bd52b7251e4";
     this.update();
 
   }

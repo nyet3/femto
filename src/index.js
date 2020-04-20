@@ -2,10 +2,12 @@ import './style.scss'
 import { dom, library } from '@fortawesome/fontawesome-svg-core';
 import {
     faPlusSquare,
-    faUserEdit,
     faCheck,
     faUser,
     faUserPlus,
+    faUserEdit,
+    faUserMinus,
+    faTrashAlt,
     faAddressBook,
     faBuilding,
     faEnvelope,
@@ -22,10 +24,13 @@ import ItemEdit from './item/ItemEdit'
 
 library.add(
     faPlusSquare,
-    faUserEdit,
     faCheck,
     faUser,
     faUserPlus,
+    faUserEdit,
+    faUserMinus,
+    faTrashAlt,
+    faAddressBook,
     faAddressBook,
     faBuilding,
     faEnvelope,

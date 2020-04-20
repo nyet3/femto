@@ -7,7 +7,6 @@ class ItemView extends ItemEdit {
         super(vnode);
         this.readonly = true;
     }
-
 }
 
 export default ItemView;

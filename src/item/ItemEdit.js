@@ -14,28 +14,28 @@ class ItemEdit {
                     <div class="field">
                         <label class="label is-size-7">契約書管理ID</label>
                         <div class="control">
-                            <input class="input" type="text" disabled={this.readonly} value={this.ctrl.data.attr.local_id} />
+                            <input class="input attr" type="text" name="local_id" disabled={this.readonly} value={this.ctrl.data.attr.local_id} />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">書類のタイトル</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="Text input" disabled={this.readonly} value={this.ctrl.data.doc.title} />
+                            <input class="input doc" type="text" name="title" placeholder="Text input" disabled={this.readonly} value={this.ctrl.data.doc.title} />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">契約相手</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="Text input" disabled={this.readonly} value={this.ctrl.data.attr.counterparty} />
+                            <input class="input attr" type="text" name="counterparty" placeholder="Text input" disabled={this.readonly} value={this.ctrl.data.attr.counterparty} />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">金額</label>
                         <div class="control">
-                            <input class="input numdata" type="text" placeholder="Number input" disabled={this.readonly} value={addFigure(String(this.ctrl.data.attr.amount))} />
+                            <input class="input attr numdata" type="text" name="amount" placeholder="Number input" disabled={this.readonly} value={addFigure(String(this.ctrl.data.attr.amount))} />
                         </div>
                     </div>
 
@@ -44,13 +44,12 @@ class ItemEdit {
                         <div class="control">
                             <div class="select">
                                 <select>
-                                    <option>書類の状態</option>
-                                    <option>下書き</option>
-                                    <option>先方確認中</option>
-                                    <option>締結済</option>
-                                    <option>取消、または却下</option>
-                                    <option>テンプレート</option>
-                                    <option>インポート書類</option>
+                                    <option disabled={this.ctrl.data.doc.status != 0 ? true : false}>下書き</option>
+                                    <option disabled={this.ctrl.data.doc.status != 1 ? true : false}>先方確認中</option>
+                                    <option disabled={this.ctrl.data.doc.status != 2 ? true : false}>締結済</option>
+                                    <option disabled={this.ctrl.data.doc.status != 3 ? true : false}>取消、または却下</option>
+                                    <option disabled={this.ctrl.data.doc.status != 4 ? true : false}>テンプレート</option>
+                                    <option disabled={this.ctrl.data.doc.status != 13 ? true : false}>インポート書類</option>
                                 </select>
                             </div>
                         </div>
@@ -59,53 +58,59 @@ class ItemEdit {
                     <div class="field">
                         <label class="label is-size-7">非公開メモ</label>
                         <div class="control">
-                            <textarea class="textarea" rows="5" disabled={this.readonly} style="width:100%">{this.ctrl.data.doc.note}</textarea>
+                            <textarea class="textarea doc" name="note" rows="5" disabled={this.readonly} style="width:100%">{this.ctrl.data.doc.note}</textarea>
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">メール受信者に対するメッセージ</label>
                         <div class="control">
-                            <textarea class="textarea" rows="5" disabled={this.readonly} style="width:100%">{this.ctrl.data.doc.message}</textarea>
+                            <textarea class="textarea doc" name="message" rows="5" disabled={this.readonly} style="width:100%">{this.ctrl.data.doc.message}</textarea>
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">契約締結日</label>
                         <div class="control">
-                            <input class="input" type="date" disabled={this.readonly} value={this.ctrl.data.attr.contract_at} />
+                            <input class="input attr" type="date" name="contract_at" disabled={this.readonly} value={this.ctrl.data.attr.contract_at} />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">契約開始日</label>
                         <div class="control">
-                            <input class="input" type="date" disabled={this.readonly} value={this.ctrl.data.attr.validity_start_at} />
+                            <input class="input attr" type="date" name="validity_start_at" disabled={this.readonly} value={this.ctrl.data.attr.validity_start_at} />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">契約終了日</label>
                         <div class="control">
-                            <input class="input" type="date" disabled={this.readonly} value={this.ctrl.data.attr.validity_end_at} />
+                            <input class="input attr" type="date" name="validity_end_at" disabled={this.readonly} value={this.ctrl.data.attr.validity_end_at} />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label is-size-7">解約通知期限</label>
                         <div class="control">
-                            <input class="input" type="date" disabled={this.readonly} value={this.ctrl.data.attr.validity_end_notice_at} />
+                            <input class="input attr" type="date" name="validity_end_notice_at" disabled={this.readonly} value={this.ctrl.data.attr.validity_end_notice_at} />
                         </div>
                     </div>
 
                     <div class="field">
+                        <label class="label is-size-7">契約の自動更新</label>
                         <div class="control">
-                            <label class="checkbox">
-                                <input type="checkbox" />
-                            契約の自動更新
-                        </label>
+                            <div class="select">
+                                <select class="attr" name="auto_update">
+                                    <option value="0" selected={this.ctrl.data.attr.auto_update == 0 ? true : false}>指定なし</option>
+                                    <option value="1" selected={this.ctrl.data.attr.auto_update == 1 ? true : false}>あり</option>
+                                    <option value="2" selected={this.ctrl.data.attr.auto_update == 2 ? true : false}>なし</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
+
+
 
                     {
                         m(".tile is-parent is-vertical",
@@ -155,11 +160,41 @@ class ItemEdit {
                                             </div>
                                         </div>
 
+
                                         <div class="field">
                                             <label class="label is-size-7">言語</label>
                                             <div class="control">
-                                                <input class="input" type="text" disabled={this.readonly} value={participant.language_code} />
+                                                <div class="select">
+                                                    <select class="participant" name="language_code">
+                                                        <option value="ja" selected={participant.language_code == "ja" ? true : false}>日本語</option>
+                                                        <option value="en" selected={participant.language_code == "en" ? true : false}>English</option>
+                                                        <option value="zh-CHS" selected={participant.language_code == "zh-CHS" ? true : false}>簡体字</option>
+                                                        <option value="zh-CHT" selected={participant.language_code == "zh-CHT" ? true : false}>繁体字</option>
+                                                    </select>
+                                                </div>
                                             </div>
+                                        </div>
+
+                                        <div class="field is-grouped is-grouped-right">
+                                            <p class="control">
+                                                <p class="buttons">
+                                                    <button class="button" data-tooltip="追加">
+                                                        <span class="icon is-small">
+                                                            <i class="fas fa-user-plus"></i>
+                                                        </span>
+                                                    </button>
+                                                    <button class="button" data-tooltip="修正">
+                                                        <span class="icon is-small">
+                                                            <i class="fas fa-user-edit"></i>
+                                                        </span>
+                                                    </button>
+                                                    <button class="button" data-tooltip="除外">
+                                                        <span class="icon is-small">
+                                                            <i class="fas fa-user-minus"></i>
+                                                        </span>
+                                                    </button>
+                                                </p>
+                                            </p>
                                         </div>
 
                                     </div>
@@ -167,6 +202,7 @@ class ItemEdit {
                             )
                         )
                     }
+
 
                     <div class="field">
                         <div class="control">
@@ -255,15 +291,36 @@ class ItemEdit {
         )
     }
     oncreate({ dom }) {
-        const elms = document.getElementsByClassName('numdata');
-        Array.from(elms).forEach(elm => {
+        Array.from(document.getElementsByClassName('numdata')).forEach(elm => {
             elm.addEventListener('blur', event => event.target.value = addFigure(event.target.value));
             elm.addEventListener('focus', event => event.target.value = delFigure(event.target.value));
         });
+        Array.from(document.getElementsByClassName('doc')).forEach(elm => {
+            elm.addEventListener('change', event => this.onchange("doc", event));
+        });
+        Array.from(document.getElementsByClassName('attr')).forEach(elm => {
+            elm.addEventListener('change', event => this.onchange("attr", event));
+        });
+    }
+    onupdate() {
+        console.log(this.ctrl.data);
     }
     onSubmit(event) {
         console.log(this.ctrl.data);
         this.ctrl.submit();
+    }
+    onchange(ctrl, event) {
+        if (!Array.from(event.target.classList).includes("is-danger")) {
+            if (event.target.value != this.ctrl.origin[ctrl][event.target.name]) {
+                event.target.classList.add("is-danger");
+            }
+        } else {
+            if (event.target.value == this.ctrl.origin[ctrl][event.target.name]) {
+                event.target.classList.remove("is-danger");
+            }
+        }
+
+        this.ctrl.data[ctrl][event.target.name] = event.target.value;
     }
 }
 
