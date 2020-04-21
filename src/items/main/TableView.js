@@ -27,7 +27,7 @@ class TableView {
             m(
               "span",
               { class: "icon is-success is-small" },
-              m("i", { class: "fas fa-plus-square" })
+              m("i", { class: "fas fa-plus" })
             )
           )
         ),

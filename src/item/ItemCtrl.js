@@ -7,8 +7,8 @@ class ItemCtrl {
     constructor(id) {
         this.id = id;
         this.data = new ItemModel(id);
-        this.origin = new ItemModel(id);
-        this.access_token = "c499b74c-9fb9-4149-ac5a-0bd52b7251e4";
+        this.origin = {};
+        this.access_token = "1d6c5cbc-f8f8-40b6-80ae-2dc9915bd5d1";
 
         if (id != null) {
             this.GetDocuments();
@@ -25,12 +25,12 @@ class ItemCtrl {
                 mode: "cors",
                 headers: {
                     "Authorization": `Bearer ${this.access_token}`,
-                    "accept": "application/json"
+                    "Accept": "application/json"
                 }
             })
             const data = await response.json();
             this.data.doc = data;
-            this.origin.doc = data;
+            this.origin.doc = JSON.parse(JSON.stringify(data));
 
             m.redraw();
         }
@@ -46,12 +46,12 @@ class ItemCtrl {
                 mode: "cors",
                 headers: {
                     "Authorization": `Bearer ${this.access_token}`,
-                    "accept": "application/json"
+                    "Accept": "application/json"
                 }
             })
             const data = await response.json();
             this.data.attr = data;
-            this.origin.attr = data;
+            this.origin.doc = JSON.parse(JSON.stringify(data));
 
             m.redraw();
         }
@@ -60,13 +60,47 @@ class ItemCtrl {
         }
     }
 
-    submit() {
+    async submit() {
+
+        // add new or update an existing document. 
         if (this.id == null) {
-            this.PostDocuments();
-            return;
+            await this.PostDocuments();
+        } else {
+            this.PutDocument();
         }
-        this.PutDocument();
-        //this.PutAttribute();
+
+        // add new or update the attribute of the document.
+        this.PutAttribute();
+
+        // remove existing and removed patricipants.
+        if (this.origin.doc != null &&
+            Array.isArray(this.origin.doc.participants)) {
+            this.origin.doc.participants.slice(1).filter(
+                source => {
+                    const l = !this.data.doc.participants.includes(
+                        dist => {
+                            console.log(`${dist.id}, ${source.id}`);
+                            dist.id == source.id
+                        })
+                    console.log(l);
+                    return l;
+                }
+            ).forEach(
+                deleted => this.DeletePaticipant(deleted.id)
+            );
+        }
+
+        // add new and update updated participants.
+        this.data.doc.participants.slice(1).forEach(
+            p => {
+                if (p.status == null) {
+                    this.PostParticipants(p.email, p.name.length, p.organization, p.access_code, p.language_code);
+                } else {
+                    this.PutParticipants(p.id, p.email, p.name.length, p.organization, p.access_code, p.language_code);
+                }
+            }
+        );
+
     }
 
     // curl -X POST "https://api.cloudsign.jp/documents" 
@@ -74,20 +108,27 @@ class ItemCtrl {
     //  -H "Content-Type: application/x-www-form-urlencoded" 
     //  -d "title=title&note=note&message=message&template_id=&can_transfer=false"
     async PostDocuments() {
+        const params = new URLSearchParams;
+        params.append("title", this.data.doc.title);
+        params.append("note", this.data.doc.note);
+        params.append("message", this.data.doc.message);
+        params.append("can_transfer", this.data.doc.can_transfer ? "true" : "false");
+
         const response = await fetch(`${csURL}/documents`, {
             mode: "cors",
             method: "POST",
             headers: {
-                "accept": "application/x-www-form-urlencoded",
                 "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
                 "Authorization": `Bearer ${this.access_token}`
             },
-            body: `title=${this.data.doc.title}&note=${this.data.doc.note}&message=${this.data.doc.message}&can_transfer=${this.data.doc.can_transfer ? 'true' : 'false'}`
+            body: params.toString()
         });
         const data = await response.json();
         console.log(data);
 
-        this.origin.doc = this.data.doc;
+        this.origin.doc = JSON.parse(JSON.stringify(this.data.doc));
+        return data;
     }
 
     // curl -X PUT "https://api.cloudsign.jp/documents/ttt"
@@ -95,21 +136,27 @@ class ItemCtrl {
     // -H "Content-Type: application/x-www-form-urlencoded"
     // -d "title=&note=&message=&can_transfer=false"
     async PutDocument() {
+        const params = new URLSearchParams;
+        params.append("title", this.data.doc.title);
+        params.append("note", this.data.doc.note);
+        params.append("message", this.data.doc.message);
+        params.append("can_transfer", this.data.doc.can_transfer ? "true" : "false");
 
         const response = await fetch(`${csURL}/documents/${this.id}`, {
             mode: "cors",
             method: "PUT",
             headers: {
-                "accept": "application/x-www-form-urlencoded",
                 "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
                 "Authorization": `Bearer ${this.access_token}`
             },
-            body: `title=${this.data.doc.title}&note=${this.data.doc.note}&message=${this.data.doc.message}&can_transfer=${this.data.doc.can_transfer ? "true" : "false"}`
+            body: params.toString()
         });
         const postsData = await response.json();
         console.log(postsData);
 
-        this.origin.doc = this.data.doc;
+        this.origin.doc = JSON.parse(JSON.stringify(this.data.doc));
+        return postsData;
     }
 
     // curl -X PUT "https://api.cloudsign.jp/documents/xxxxx/attribute"
@@ -128,7 +175,8 @@ class ItemCtrl {
     //    'options':[{'order':1,'content':'string'}]}"
     async PutAttribute() {
         const data = {};
-        [
+
+        const li1 = [
             'title',
             'counterparty',
             'contract_at',
@@ -138,46 +186,133 @@ class ItemCtrl {
             'auto_update',
             'local_id',
             'amount',
-        ].forEach(
+        ];
+        li1.forEach(
             item => {
-                if (item in this.data.attr && this.data.attr[item] != null && !Array.isArray(this.data.attr[item])) {
-                    data[item] = this.data.attr[item]
+                if (item in this.data.attr &&
+                    this.data.attr[item] != null &&
+                    this.data.attr[item] != "" &&
+                    !Array.isArray(this.data.attr[item])) {
+
+                    data[item] = this.data.attr[item];
+
                 }
             }
-        )
+        );
 
-        console.log(data);
-
-        [
+        const li2 = [
             'options'
-        ].forEach(
+        ];
+
+        li2.forEach(
             item => {
-                if (Array.isArray(this.data.attr[item]) && this.data.attr[item].length != 0) {
+                if (Array.isArray(this.data.attr[item]) &&
+                    this.data.attr[item].length != 0) {
+
                     data[item] = this.data.attr[item]
+
                 }
             }
-        )
+        );
 
-        console.log(data);
-
-        const jsonStr = JSON.stringify(data);
-        console.log(jsonStr);
+        //const jsonStr = JSON.stringify(data);
+        //console.log(jsonStr);
 
         const response = await fetch(`${csURL}/documents/${this.id}/attribute`, {
             mode: "cors",
             method: "PUT",
             headers: {
-                "accept": "application/json",
                 "Content-Type": "application/json",
-                "body": jsonStr,
+                "Accept": "application/json",
                 "Authorization": `Bearer ${this.access_token}`
             },
+            body: JSON.stringify(data)
         });
+
         const postsData = await response.json();
         console.log(postsData);
 
-        this.origin.attr = this.data.attr;
+        this.origin.attr = JSON.parse(JSON.stringify(this.data.attr));
+        return postsData;
     }
+    // curl -X POST "https://api.cloudsign.jp/documents/xxxxxx/participants"
+    // -H "accept: application/json"
+    // -H "Content-Type: application/x-www-form-urlencoded"
+    // -d "email=&name=&organization=&access_code=&language_code=ja"
+    async PostParticipants(email, name, organization, access_code, language_code) {
+        const params = new URLSearchParams;
+        if (email != "") params.append("email", email);
+        if (name != "") params.append("name", name);
+        if (organization != "") params.append("organization", organization);
+        if (access_code != "") params.append("access_code", access_code);
+        params.append("language_code", language_code == "" ? "ja" : language_code);
+
+        const response = await fetch(`${csURL}/documents/${this.id}/participants`, {
+            mode: "cors",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${this.access_token}`
+            },
+            body: params.toString()
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        this.origin.doc = JSON.parse(JSON.stringify(this.data.doc));
+        return data;
+    }
+    // curl -X PUT "https://api.cloudsign.jp/documents/xxxx/participants/xxxxxx"
+    // -H "accept: application/json"
+    // -H "Content-Type: application/x-www-form-urlencoded"
+    // -d "email=&name=&organization=&access_code=&language_code="
+    async PutParticipants(id, email, name, organization, access_code, language_code) {
+        const params = new URLSearchParams;
+        if (email != "") params.append("email", email);
+        if (name != "") params.append("name", name);
+        if (organization != "") params.append("organization", organization);
+        if (access_code != "") params.append("access_code", access_code);
+        params.append("language_code", language_code == "" ? "ja" : language_code);
+
+        const response = await fetch(`${csURL}/documents/${this.id}/participants/${id}`, {
+            mode: "cors",
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${this.access_token}`
+            },
+            body: params.toString()
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        this.origin.doc = JSON.parse(JSON.stringify(this.data.doc));
+        return data;
+    }
+
+    // curl -X DELETE "https://api.cloudsign.jp/documents/xxxx/participants/xxxx" 
+    // -H "accept: application/json"
+    async DeletePaticipant(id) {
+        const response = await fetch(`${csURL}/documents/${this.id}/participants/${id}`, {
+            mode: "cors",
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `Bearer ${this.access_token}`
+            }
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        this.origin.doc = JSON.parse(JSON.stringify(this.data.doc));
+        return data;
+    }
+
 }
 
 export default ItemCtrl;

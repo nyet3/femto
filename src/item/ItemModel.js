@@ -13,7 +13,7 @@ class ItemModel {
       note: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce lacinia libero a pharetra bibendum. Cras interdum ultricies dictum. Duis vitae imperdiet ex. Fusce sit amet congue ipsum. Nullam eget risus non est fringilla cursus id sed velit. Etiam ornare auctor nulla. Cras condimentum dignissim odio sit amet cursus. Quisque suscipit id nisi vel varius. Suspendisse vulputate est eget dolor dignissim molestie.",
       message: "Vivamus libero magna, rhoncus porta tellus euismod, accumsan rutrum mauris. Sed malesuada libero nulla, a tincidunt ipsum sollicitudin ut. Praesent vehicula ut elit quis dignissim. Vivamus lacus nunc, placerat eu malesuada quis, varius vitae mi. Suspendisse aliquam quam eget lacus imperdiet placerat. Sed ac ligula imperdiet, ultricies libero vitae, ultricies eros. Praesent eu eleifend risus. Cras quis lorem massa. Morbi nec vehicula leo, vitae viverra est. Nulla ullamcorper cursus finibus. Quisque tempus odio enim, cursus imperdiet purus tempus non. Integer non tristique massa. Sed faucibus dictum ligula et posuere. Proin et efficitur odio.",
       status: 1, // int64 (0 - draft)
-      can_transfer: false,
+      can_transfer: true,
       sent_at: now.toISOString(),           // 'YYYY-MM-DDThh:mm:ss.SSSSSSZ'
       last_processed_at: now.toISOString(), // 'YYYY-MM-DDThh:mm:ss.SSSSSSZ'
       created_at: now.toISOString(),        // 'YYYY-MM-DDThh:mm:ssZ'

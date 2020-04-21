@@ -110,62 +110,72 @@ class ItemEdit {
                         </div>
                     </div>
 
-
-
                     {
                         m(".tile is-parent is-vertical",
                             this.ctrl.data.doc.participants.map(
-                                participant => (
+                                (participant, index) => (
                                     <div class="tile box is-child is-vertical">
 
                                         <div class="field">
-                                            <label class="label is-size-7">宛先ID</label>
+                                            <label class="label is-size-7">名前</label>
                                             <div class="control">
-                                                <input class="input" type="text" disabled={this.readonly} value={participant.id} />
+                                                <input
+                                                    class="input"
+                                                    type="text"
+                                                    disabled={this.readonly || index == 0}
+                                                    name="name"
+                                                    value={participant.name}
+                                                    onchange={event => this.onchange(event, participant)} />
                                             </div>
                                         </div>
 
                                         <div class="field">
-                                            <label class="label is-size-7">宛先組織</label>
+                                            <label class="label is-size-7">組織</label>
                                             <div class="control">
-                                                <input class="input" type="text" disabled={this.readonly} value={participant.organization} />
-                                            </div>
-                                        </div>
-
-                                        <div class="field">
-                                            <label class="label is-size-7">宛先</label>
-                                            <div class="control">
-                                                <input class="input" type="text" disabled={this.readonly} value={participant.name} />
+                                                <input
+                                                    class="input"
+                                                    type="text"
+                                                    disabled={this.readonly || index == 0}
+                                                    name="organization"
+                                                    value={participant.organization}
+                                                    onchange={event => this.onchange(event, participant)} />
                                             </div>
                                         </div>
 
                                         <div class="field">
                                             <label class="label is-size-7">E-Mail</label>
                                             <div class="control">
-                                                <input class="input" type="text" disabled={this.readonly} value={participant.email} />
+                                                <input
+                                                    class="input"
+                                                    type="text"
+                                                    disabled={this.readonly || index == 0}
+                                                    name="email"
+                                                    value={participant.email}
+                                                    onchange={event => this.onchange(event, participant)} />
                                             </div>
                                         </div>
 
                                         <div class="field">
                                             <label class="label is-size-7">アクセスコード</label>
                                             <div class="control">
-                                                <input class="input" type="text" disabled={this.readonly} value={participant.access_code} />
+                                                <input
+                                                    class="input"
+                                                    type="text"
+                                                    disabled={this.readonly || index == 0}
+                                                    name="access_code"
+                                                    value={participant.access_code}
+                                                    onchange={event => this.onchange(event, participant)} />
                                             </div>
                                         </div>
-
-                                        <div class="field">
-                                            <label class="label is-size-7">E-Mailの状態</label>
-                                            <div class="control">
-                                                <input class="input" type="text" disabled={this.readonly} value={participant.status} />
-                                            </div>
-                                        </div>
-
 
                                         <div class="field">
                                             <label class="label is-size-7">言語</label>
                                             <div class="control">
                                                 <div class="select">
-                                                    <select class="participant" name="language_code">
+                                                    <select
+                                                        class="participant"
+                                                        name="language_code"
+                                                        onchange={event => this.onchange(event, participant)} >
                                                         <option value="ja" selected={participant.language_code == "ja" ? true : false}>日本語</option>
                                                         <option value="en" selected={participant.language_code == "en" ? true : false}>English</option>
                                                         <option value="zh-CHS" selected={participant.language_code == "zh-CHS" ? true : false}>簡体字</option>
@@ -175,20 +185,43 @@ class ItemEdit {
                                             </div>
                                         </div>
 
+                                        <div class="field">
+                                            <label class="label is-size-7">E-Mailの状態</label>
+                                            <div class="control">
+                                                <div class="select">
+                                                    <select>
+                                                        <option disabled={participant.status != 0 ? true : false}>アクセス不可</option>
+                                                        <option disabled={participant.status != 2 ? true : false}>下書き</option>
+                                                        <option disabled={participant.status != 3 ? true : false}>配信待ち</option>
+                                                        <option disabled={participant.status != 4 ? true : false}>確認待ち</option>
+                                                        <option disabled={participant.status != 6 ? true : false}>送信済み</option>
+                                                        <option disabled={participant.status != 7 ? true : false}>確認済み</option>
+                                                        <option disabled={participant.status != 8 ? true : false}>押印または入力済み</option>
+                                                        <option disabled={participant.status != 9 ? true : false}>却下</option>
+                                                        <option disabled={participant.status != 10 ? true : false}>キャンセル</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="field">
+                                            <label class="label is-size-7">宛先ID</label>
+                                            <div class="control">
+                                                <input class="input" type="text" disabled value={participant.id} />
+                                            </div>
+                                        </div>
+
                                         <div class="field is-grouped is-grouped-right">
                                             <p class="control">
                                                 <p class="buttons">
-                                                    <button class="button" data-tooltip="追加">
+                                                    <button class="button" data-tooltip="追加" disabled={this.readonly}
+                                                        onclick={event => this.onClickAddParticipant(event)}>
                                                         <span class="icon is-small">
                                                             <i class="fas fa-user-plus"></i>
                                                         </span>
                                                     </button>
-                                                    <button class="button" data-tooltip="修正">
-                                                        <span class="icon is-small">
-                                                            <i class="fas fa-user-edit"></i>
-                                                        </span>
-                                                    </button>
-                                                    <button class="button" data-tooltip="除外">
+                                                    <button class="button" data-tooltip="除外" disabled={this.readonly || index == 0}
+                                                        onclick={event => this.onClickRemoveParticipant(event, index)}>
                                                         <span class="icon is-small">
                                                             <i class="fas fa-user-minus"></i>
                                                         </span>
@@ -203,11 +236,10 @@ class ItemEdit {
                         )
                     }
 
-
                     <div class="field">
                         <div class="control">
                             <label class="checkbox">
-                                <input type="checkbox" />
+                                <input type="checkbox" checked={this.ctrl.data.doc.can_transfer} />
                             転送許可
                         </label>
                         </div>
@@ -225,6 +257,29 @@ class ItemEdit {
                             )
                         )
                     }
+                    <div class="field is-grouped is-grouped-right">
+                        <p class="control">
+                            <p class="buttons">
+                                <button class="button" data-tooltip="追加"
+                                    disabled={this.readonly ||
+                                        (this.ctrl.data.attr.options != null && this.ctrl.data.attr.options.length > 8)}
+                                    onclick={event => this.onClickAddOptions(event)}>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </button>
+                                <button class="button" data-tooltip="削除"
+                                    disabled={this.readonly ||
+                                        this.ctrl.data.attr.options == null ||
+                                        (this.ctrl.data.attr.options != null && this.ctrl.data.attr.options.length < 1)}
+                                    onclick={event => this.onClickDeleteOptions(event)}>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </button>
+                            </p>
+                        </p>
+                    </div>
 
                     <hr />
 
@@ -287,7 +342,7 @@ class ItemEdit {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
         )
     }
     oncreate({ dom }) {
@@ -296,31 +351,58 @@ class ItemEdit {
             elm.addEventListener('focus', event => event.target.value = delFigure(event.target.value));
         });
         Array.from(document.getElementsByClassName('doc')).forEach(elm => {
-            elm.addEventListener('change', event => this.onchange("doc", event));
+            elm.addEventListener('change', event => this.onchange(event, this.ctrl.origin.doc));
         });
         Array.from(document.getElementsByClassName('attr')).forEach(elm => {
-            elm.addEventListener('change', event => this.onchange("attr", event));
+            elm.addEventListener('change', event => this.onchange(event, this.ctrl.origin.attr));
         });
     }
-    onupdate() {
-        console.log(this.ctrl.data);
-    }
+
     onSubmit(event) {
-        console.log(this.ctrl.data);
         this.ctrl.submit();
     }
-    onchange(ctrl, event) {
+
+    onchange(event, data) {
         if (!Array.from(event.target.classList).includes("is-danger")) {
-            if (event.target.value != this.ctrl.origin[ctrl][event.target.name]) {
+            if (event.target.value != data[event.target.name]) {
                 event.target.classList.add("is-danger");
             }
         } else {
-            if (event.target.value == this.ctrl.origin[ctrl][event.target.name]) {
+            if (event.target.value == data[event.target.name]) {
                 event.target.classList.remove("is-danger");
             }
         }
 
-        this.ctrl.data[ctrl][event.target.name] = event.target.value;
+        data[event.target.name] = event.target.value;
+    }
+
+    onClickAddParticipant(event) {
+        this.ctrl.data.doc.participants.push({
+            email: "", // 宛先のメールアドレス
+            name: "", // 宛先の名前
+            organization: "", // 宛先の会社名
+            access_code: "", // 宛先に設定されているアクセスコード。APIを使用しているユーザーが値を設定した場合のみレスポンスに含まれる。
+            language_code: "",// 宛先の言語設定。ja（日本語）、en（英語）、zh-CHS（簡体字）、zh-CHT（繁体字）のいずれか。
+        })
+        m.redraw();
+    }
+
+    onClickRemoveParticipant(event, index) {
+        this.ctrl.data.doc.participants.splice(index, 1);
+    }
+
+    onClickAddOptions(event) {
+        const n = this.ctrl.data.attr.options.length;
+        this.ctrl.data.attr.options.push({
+            order: n + 1,
+            content: ""
+        });
+        m.redraw();
+    }
+
+    onClickDeleteOptions(event) {
+        this.ctrl.data.attr.options.pop();
+        m.redraw();
     }
 }
 

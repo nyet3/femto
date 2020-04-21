@@ -38,7 +38,7 @@ module.exports = (env, { mode }) => {
   };
 
   // settings
-  if (mode == "production") {
+  if (mode != "production") {
     conf.devtool = "inline-source-map";
     conf.plugins.push(
       new S3Plugin({
@@ -57,7 +57,7 @@ module.exports = (env, { mode }) => {
     );
   } else { // development mode
     conf.devServer = {
-      public: "ec2-3-112-207-133.ap-northeast-1.compute.amazonaws.com",
+      public: "ec2-54-92-109-44.ap-northeast-1.compute.amazonaws.com",
       host: "0.0.0.0",
       port: "8080",
     };
