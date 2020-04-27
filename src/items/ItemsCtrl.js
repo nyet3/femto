@@ -1,8 +1,7 @@
-import m from 'mithril'
-const csURL = "https://api-sandbox.cloudsign.jp"
+import m from 'mithril';
+const csURL = 'https://api-sandbox.cloudsign.jp';
 
 class MembersCtrl {
-
   constructor() {
     this.data = [];
     this.buffer = [];
@@ -12,17 +11,15 @@ class MembersCtrl {
     this.max = 0;
     this.step = 5;
 
-    this.access_token = "1d6c5cbc-f8f8-40b6-80ae-2dc9915bd5d1";
+    this.access_token = '1adbc846-40be-491d-b1ee-6088ad444e98';
     this.update();
-
   }
 
   update() {
     if (this.max < this.position + this.size)
       this.position = this.position = this.max - this.size;
 
-    if (this.position < 0)
-      this.position = 0;
+    if (this.position < 0) this.position = 0;
 
     const rangeTo = this.position + this.size;
     const rangeFrom = this.buffer.length;
@@ -30,17 +27,16 @@ class MembersCtrl {
     this.request(rangeFrom, rangeTo);
   }
 
-  // curl --header "Authorization: Bearer 5959268e-4393-44b8-81bc-ec4f9f480619" 
+  // curl --header "Authorization: Bearer 5959268e-4393-44b8-81bc-ec4f9f480619"
   // https://api-sandbox.cloudsign.jp/documents
   async request(rangeFrom, rangeTo) {
-
     const response = await fetch(`${csURL}/documents`, {
-      mode: "cors",
+      mode: 'cors',
       headers: {
-        "Authorization": `Bearer ${this.access_token}`,
-        "accept": "application/json"
-      }
-    })
+        Authorization: `Bearer ${this.access_token}`,
+        accept: 'application/json',
+      },
+    });
 
     const data = await response.json();
     this.max = data.total;
@@ -56,7 +52,7 @@ class MembersCtrl {
   }
 
   onwheel(event) {
-    this.position += Math.floor(event.deltaY / 150.0 * this.step);
+    this.position += Math.floor((event.deltaY / 150.0) * this.step);
     this.update();
   }
 
@@ -68,7 +64,6 @@ class MembersCtrl {
     });
     this.max++;
   }
-
 }
 
 export default MembersCtrl;

@@ -1,7 +1,6 @@
-import m from 'mithril'
+import m from 'mithril';
 
 class MembersCtrl {
-
   constructor() {
     this.data = [];
     this.buffer = [];
@@ -18,8 +17,7 @@ class MembersCtrl {
     if (this.max < this.position + this.size)
       this.position = this.position = this.max - this.size;
 
-    if (this.position < 0)
-      this.position = 0;
+    if (this.position < 0) this.position = 0;
 
     const rangeTo = this.position + this.size;
     const rangeFrom = this.buffer.length;
@@ -28,11 +26,10 @@ class MembersCtrl {
   }
 
   async request(rangeFrom, rangeTo) {
-
     // GET /members
     for (let i = rangeFrom; i < rangeTo; i++) {
       if (this.buffer.length < i || this.buffer[i] != null)
-        console.log(`NG: ${(i + this.position)}(${this.buffer[i].name})`);
+        console.log(`NG: ${i + this.position}(${this.buffer[i].name})`);
 
       this.buffer[i] = {
         id: i,
@@ -46,7 +43,7 @@ class MembersCtrl {
   }
 
   onwheel(event) {
-    this.position += Math.floor(event.deltaY / 150.0 * this.step);
+    this.position += Math.floor((event.deltaY / 150.0) * this.step);
     this.update();
   }
 
@@ -58,7 +55,6 @@ class MembersCtrl {
     });
     this.max++;
   }
-
 }
 
 export default MembersCtrl;

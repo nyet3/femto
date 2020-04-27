@@ -1,17 +1,17 @@
-require("dotenv").config();
+require('dotenv').config();
 
 //var UglyfyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
-var { CleanWebpackPlugin } = require("clean-webpack-plugin");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
-var S3Plugin = require("webpack-s3-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const S3Plugin = require('webpack-s3-plugin');
 
 module.exports = (env, { mode }) => {
   const conf = {
     plugins: [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
-        title: "femtogram",
-        filename: "index.html",
+        title: 'femtogram',
+        filename: 'index.html',
       }),
     ],
     module: {
@@ -19,49 +19,50 @@ module.exports = (env, { mode }) => {
         {
           test: /.\.scss$/,
           exclude: /\/node_modules\//,
-          use: ["style-loader", "css-loader", "sass-loader"],
+          use: ['style-loader', 'css-loader', 'sass-loader'],
         },
         {
           test: /.\.js$/,
           exclude: /\/node_modules\//,
-          use: ["babel-loader"],
+          use: ['babel-loader'],
         },
       ],
     },
     optimization: {
       splitChunks: {
-        name: "vendor",
-        chunks: "initial",
+        name: 'vendor',
+        chunks: 'initial',
       },
       //      minimizer: [new UglyfyjsWebpackPlugin()]
     },
   };
 
   // settings
-  if (mode != "production") {
-    conf.devtool = "inline-source-map";
+  if (mode != 'production') {
+    conf.devtool = 'inline-source-map';
     conf.plugins.push(
       new S3Plugin({
         include: /.*\.(html|js)/,
         s3Options: {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID,
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          region: "ap-northeast-1",
+          region: 'ap-northeast-1',
         },
         cloudfrontInvalidateOptions: {
           DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-          Items: ["/*"]
+          Items: ['/*'],
         },
-        s3UploadOptions: { Bucket: "femtogram" },
+        s3UploadOptions: { Bucket: 'femtogram' },
       })
     );
-  } else { // development mode
+  } else {
+    // development mode
     conf.devServer = {
-      public: "ec2-54-92-109-44.ap-northeast-1.compute.amazonaws.com",
-      host: "0.0.0.0",
-      port: "8080",
+      public: 'ec2-13-230-238-12.ap-northeast-1.compute.amazonaws.com',
+      host: '0.0.0.0',
+      port: '8080',
     };
-    conf.devtool = "inline-source-map";
+    conf.devtool = 'inline-source-map';
   }
 
   return conf;

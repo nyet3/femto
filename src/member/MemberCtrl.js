@@ -1,13 +1,11 @@
-import m from 'mithril'
+import m from 'mithril';
 
 class MemberCtrl {
-
   constructor(id) {
     this.request(id);
   }
 
   async request(id) {
-
     this.data = {
       id: id,
       name: `nyet${id}`,
@@ -20,36 +18,35 @@ class MemberCtrl {
           items: [
             {
               id: 1,
-              name: "document1"
+              name: 'document1',
             },
             {
               id: 2,
-              name: "document2"
-            }
-          ]
+              name: 'document2',
+            },
+          ],
         },
         {
           fy: 2019,
           items: [
             {
               id: 3,
-              name: "document3"
+              name: 'document3',
             },
             {
               id: 4,
-              name: "document4"
+              name: 'document4',
             },
             {
               id: 5,
-              name: "document5"
-            }
-          ]
+              name: 'document5',
+            },
+          ],
         },
-      ]
+      ],
     };
     m.redraw();
   }
-
 }
 
 export default MemberCtrl;
