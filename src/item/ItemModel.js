@@ -75,21 +75,6 @@ class ItemModel {
       auto_update: '2', // 自動更新の有無: 0(指定なし), 1(あり), 2(なし)
       local_id: 'xxxxxxxx', // 管理番号
       amount: 10000000, // 取引金額 nullを許容する
-      options: [
-        // ユーザー定義の項目
-        {
-          order: 1, // ユーザー定義の項目の番号
-          content: 'group X', // ユーザー定義の項目の値
-        },
-        {
-          order: 2, // ユーザー定義の項目の番号
-          content: 'desk N', // ユーザー定義の項目の値
-        },
-        {
-          order: 3, // ユーザー定義の項目の番号
-          content: 'team A', // ユーザー定義の項目の値
-        },
-      ],
     };
   }
 }

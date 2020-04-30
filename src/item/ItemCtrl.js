@@ -8,7 +8,7 @@ class ItemCtrl {
     this.id = id;
     this.data = new ItemModel(id);
     this.origin = {};
-    this.access_token = '1adbc846-40be-491d-b1ee-6088ad444e98';
+    this.access_token = '06a2f016-dac5-4de5-9ab4-9aa67968cd7b';
 
     if (id != null) {
       this.GetDocuments();
@@ -232,21 +232,6 @@ class ItemCtrl {
       }
     });
 
-    data.options = [];
-
-    if (Array.isArray(this.data.attr.options)) {
-      this.data.attr.options.forEach((option, index) => {
-        data.options.push({
-          order: index + 1,
-          content: option.content,
-        });
-      });
-    }
-
-    const jsonStr = JSON.stringify(data);
-    console.log(jsonStr);
-    console.log(data);
-
     const response = await fetch(`${csURL}/documents/${this.id}/attribute`, {
       mode: 'cors',
       method: 'PUT',
@@ -259,7 +244,6 @@ class ItemCtrl {
     });
 
     const postsData = await response.json();
-    console.log(postsData);
 
     if (!response.ok || response.status != 200) {
       return null;

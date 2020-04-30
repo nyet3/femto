@@ -11,7 +11,7 @@ class MembersCtrl {
     this.max = 0;
     this.step = 5;
 
-    this.access_token = '1adbc846-40be-491d-b1ee-6088ad444e98';
+    this.access_token = '06a2f016-dac5-4de5-9ab4-9aa67968cd7b';
     this.update();
   }
 

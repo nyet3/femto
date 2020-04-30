@@ -480,57 +480,6 @@ class ItemEdit {
             </div>
           </div>
 
-          {this.ctrl.data.attr.options.map(item => (
-            <div class='field'>
-              <label class='label is-size-7'>管理項目{item.order}</label>
-              <div class='control'>
-                <input
-                  class='input'
-                  type='text'
-                  name='content'
-                  disabled={this.readonly}
-                  value={item.content}
-                  onchange={event => this.onchange(event, item)}
-                />
-              </div>
-            </div>
-          ))}
-          <div class='field is-grouped is-grouped-right'>
-            <p class='control'>
-              <p class='buttons'>
-                <button
-                  class='button'
-                  data-tooltip='追加'
-                  disabled={
-                    this.readonly ||
-                    (this.ctrl.data.attr.options != null &&
-                      this.ctrl.data.attr.options.length > 8)
-                  }
-                  onclick={event => this.onClickAddOptions(event)}
-                >
-                  <span class='icon is-small'>
-                    <i class='fas fa-plus'></i>
-                  </span>
-                </button>
-                <button
-                  class='button'
-                  data-tooltip='削除'
-                  disabled={
-                    this.readonly ||
-                    this.ctrl.data.attr.options == null ||
-                    (this.ctrl.data.attr.options != null &&
-                      this.ctrl.data.attr.options.length < 1)
-                  }
-                  onclick={event => this.onClickDeleteOptions(event)}
-                >
-                  <span class='icon is-small'>
-                    <i class='fas fa-minus'></i>
-                  </span>
-                </button>
-              </p>
-            </p>
-          </div>
-
           <hr />
 
           <div class='field'>

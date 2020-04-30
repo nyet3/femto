@@ -58,7 +58,7 @@ module.exports = (env, { mode }) => {
   } else {
     // development mode
     conf.devServer = {
-      public: 'ec2-13-230-238-12.ap-northeast-1.compute.amazonaws.com',
+      public: 'ec2-54-199-22-184.ap-northeast-1.compute.amazonaws.com',
       host: '0.0.0.0',
       port: '8080',
     };
