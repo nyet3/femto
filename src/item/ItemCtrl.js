@@ -8,7 +8,7 @@ class ItemCtrl {
     this.id = id;
     this.data = new ItemModel(id);
     this.origin = {};
-    this.access_token = '06a2f016-dac5-4de5-9ab4-9aa67968cd7b';
+    this.access_token = '68929950-94ea-4c41-bdd9-bf3c39bc737f';
 
     if (id != null) {
       this.GetDocuments();
@@ -123,8 +123,6 @@ class ItemCtrl {
 
     const results = await Promise.all(promises);
     console.log(results);
-
-    m.redraw();
   }
 
   // curl -X POST "https://api.cloudsign.jp/documents"

@@ -617,6 +617,7 @@ class ItemEdit {
 
   onSubmit(event) {
     this.ctrl.submit();
+    this.resetColor();
   }
 
   onchange(event, data) {
@@ -661,6 +662,15 @@ class ItemEdit {
   onClickDeleteOptions(event) {
     this.ctrl.data.attr.options.pop();
     m.redraw();
+  }
+
+  resetColor() {
+    Array.from(document.getElementsByClassName('doc')).forEach(elm => {
+      elm.classList.remove('is-danger');
+    });
+    Array.from(document.getElementsByClassName('attr')).forEach(elm => {
+      elm.classList.remove('is-danger');
+    });
   }
 }
 
